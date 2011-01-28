@@ -40,8 +40,7 @@ void loop() {
         sei();
 
         if (lastTime != 0) {
-                currentSample = long(50e9 / (now - lastTime));
-                long millihz = currentSample;
+                long millihz = long(50e9 / (now - lastTime));
                 Serial.print(millihz/1000);
                 Serial.print('.');
                 Serial.print((millihz/100) % 10, DEC);
@@ -52,11 +51,15 @@ void loop() {
                         Serial.print('+');
                 Serial.print((millihz - 50000) * 0.002);
                 Serial.println(" % ");
+                
+                if (millihz > 50250)
+                        millihz = 50250;
+                if (millihz < 49750)
+                        millihz = 49750;
                 if (millihz > 50000)
-                        sendPositive((millihz - 50000) * 1);
+                        sendPositive(millihz - 50000);
                 if (millihz < 50000)
-                        sendNegative((50000 - millihz) * 1);
- 
+                        sendNegative(50000 - millihz);
         }
         
         lastTime = now;
