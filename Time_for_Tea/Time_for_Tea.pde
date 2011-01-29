@@ -17,7 +17,7 @@ int meterPin2 =  3;    // meter wire connected to digital pin 3
 
 void setup() {
         Serial.begin(57600);
-        Serial.println("[hertz]");
+        Serial.println("\n[hertz]");
 
         // compare against 1.1v reference
         ACSR = _BV(ACBG) | _BV(ACI) | _BV(ACIE);
@@ -30,6 +30,7 @@ void setup() {
         // initialize the digital pins as an output:
         pinMode(meterPin1, OUTPUT);
         pinMode(meterPin2, OUTPUT);
+
 }
 
 void loop() {
@@ -41,6 +42,8 @@ void loop() {
 
         if (lastTime != 0) {
                 long millihz = long(50e9 / (now - lastTime));
+                Serial.print(now);
+                Serial.print(" microseconds ");
                 Serial.print(millihz/1000);
                 Serial.print('.');
                 Serial.print((millihz/100) % 10, DEC);
@@ -56,15 +59,15 @@ void loop() {
                         millihz = 50250;
                 if (millihz < 49750)
                         millihz = 49750;
-                if (millihz > 50000)
+                if (millihz >= 50000)
                         sendPositive(millihz - 50000);
-                if (millihz < 50000)
+                else
                         sendNegative(50000 - millihz);
-        }
+                }
         
-        lastTime = now;
-} else
-        sei();
+                lastTime = now;
+        } else
+            sei();
 }
 
 void sendPositive(int voltage) {
