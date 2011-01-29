@@ -51,10 +51,11 @@ void setup() {
 }
 
 void loop() {
-  static unsigned long lastTime;
-  unsigned long now;
   uint8_t ccount;
+  unsigned long lastTime;
+  unsigned long now;
   unsigned long millihz;
+  unsigned long interval;
   //unsigned long mainz = 5000000000UL;
     unsigned long mainz = 500000000UL;
 
@@ -67,7 +68,8 @@ void loop() {
 
   if (ccount >= 100) {
     if (lastTime > 0 && lastTime < now) {
-      millihz = (mainz / (now - lastTime));
+      interval = (now - lastTime) / 10UK;
+      millihz = mainz / interval;
 
       printLog(now, millihz);
 
@@ -84,5 +86,3 @@ void loop() {
     lastTime = now;
   }
 }
-
-
