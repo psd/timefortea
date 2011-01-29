@@ -1,8 +1,6 @@
-//Frequency measurement
+
 
 volatile uint8_t count = 0;
-long lastTime;
-
 ISR(ANALOG_COMP_vect) {
   ++count; // counts up and down transitions
 }
@@ -11,6 +9,16 @@ ISR(ANALOG_COMP_vect) {
 
 int meterPin1 =  5;    // meter wire connected to digital pin 5
 int meterPin2 =  3;    // meter wire connected to digital pin 3
+
+void sendPositive(int voltage) {
+  digitalWrite(meterPin2, LOW);    // set the Pin meterPin2 LOW
+  analogWrite(meterPin1, voltage); //
+}
+
+void sendNegative(int voltage){
+  digitalWrite(meterPin1, LOW);    // set the Pin meterPin1 LOW
+  analogWrite(meterPin2, voltage); //
+}
 
 void setup() {
   Serial.begin(57600);
@@ -31,6 +39,8 @@ void setup() {
 }
 
 void loop() {
+static long lastTime;
+
   cli();
   if (count >= 100) {
     long now = micros();
@@ -66,17 +76,5 @@ void loop() {
   } 
   else
     sei();
-}
-
-void sendPositive(int voltage) {
-  digitalWrite(meterPin2, LOW);    // set the Pin meterPin2 LOW
-  analogWrite(meterPin1, voltage); //
-
-}
-
-void sendNegative(int voltage){
-
-  digitalWrite(meterPin1, LOW);    // set the Pin meterPin1 LOW
-  analogWrite(meterPin2, voltage); //
 }
 
