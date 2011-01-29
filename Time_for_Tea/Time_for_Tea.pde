@@ -1,10 +1,7 @@
 //Frequency measurement
 
-volatile uint8_t count;
-uint8_t first = 1;
+volatile uint8_t count = 0;
 long lastTime;
-long currentSample;
-long lastSample;
 
 ISR(ANALOG_COMP_vect) {
   ++count; // counts up and down transitions
