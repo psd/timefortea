@@ -17,7 +17,7 @@ void sendNegative(int voltage){
   analogWrite(meterPin2, voltage); //
 }
 
-void printLog(now, millihz) {
+void printLog(unsigned long now, unsigned long millihz) {
   Serial.print(now);
   Serial.print(" microseconds ");
   Serial.print(millihz/1000);
@@ -26,9 +26,9 @@ void printLog(now, millihz) {
   Serial.print((millihz/10) % 10, DEC);
   Serial.print((millihz) % 10, DEC);
   Serial.print(" Hz ");
-  if (millihz >= 50000)
+  if (millihz >= 50000UL)
     Serial.print('+');
-  Serial.print((millihz - 50000) * 0.002);
+  Serial.print((millihz - 50000UL) * 0.002);
   Serial.println(" % ");
 }
 
@@ -51,32 +51,38 @@ void setup() {
 }
 
 void loop() {
-static long lastTime;
+  static unsigned long lastTime;
+  unsigned long now;
+  uint8_t ccount;
+  unsigned long millihz;
+  //unsigned long mainz = 5000000000UL;
+    unsigned long mainz = 500000000UL;
 
   cli();
-  if (count >= 100) {
-    long now = micros();
+  now = micros();
+  ccount = count;
+  if (count >= 100)
     count -= 100;
-    sei();
+  sei();
 
-    if (lastTime != 0) {
-      long millihz = long(50e9 / (now - lastTime));
+  if (ccount >= 100) {
+    if (lastTime > 0 && lastTime < now) {
+      millihz = (mainz / (now - lastTime));
 
-	  printLog(now, millihz);
+      printLog(now, millihz);
 
-      if (millihz > 50250)
-        millihz = 50250;
-      if (millihz < 49750)
-        millihz = 49750;
-      if (millihz >= 50000)
-        sendPositive(millihz - 50000);
+      if (millihz > 50250UL)
+        millihz = 50250UL;
+      if (millihz < 49750UL)
+        millihz = 49750UL;
+
+      if (millihz >= 50000UL)
+        sendPositive(millihz - 50000UL);
       else
-        sendNegative(50000 - millihz);
+        sendNegative(50000UL - millihz);
     }
-
     lastTime = now;
-  } 
-  else
-    sei();
+  }
 }
+
 
